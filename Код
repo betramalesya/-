@@ -1,0 +1,126 @@
+<script src = "dom_utils.js"></script>
+<script>
+
+function select(id,options){
+	var sel = document.createElement("select");
+	sel.id = id;
+	for (var i = 0; i< options.length; i++){
+	var opt = document.createElement("option");
+	opt.value = options[i];
+	opt.text = options[i];
+	sel.appendChild(opt);
+	}
+	return sel;
+
+}
+function button(text, func) {
+	var btn = document.createElement('input');
+	btn.type = "button";
+	btn.value = text;
+	btn.onclick = func;
+	return btn;
+}
+
+function label(text) {
+	var newLabel = document.createElement('label');
+	newLabel.innerHTML = text;
+	return newLabel;
+}
+
+function br() {
+	return document.createElement('br');
+}
+
+function text(id) {
+	var textFiled = document.createElement('input');
+	textFiled.type = 'text';
+	textFiled.id = id;
+	return textFiled;
+}
+
+function number(id){
+	var nFiled = document.createElement('input');
+	nFiled.type = 'number';
+	nFiled.id = id;
+	nFiled.min = 1;
+	return nFiled;
+}
+
+function createProcent() {
+	add(label("Сумма вклада: "));
+	add(text("id_summa")); add(br());
+	add(label("Срок вклада: "));
+	add(number("id_srok")); add(br());
+	add(label("Процентая ставка (годовых): "));
+	add(text("id_procent")); add(br());
+	add(button("%",calculateProcent)); add(br());
+	add(label("Доход: "));
+	add(text("id_dohod"));
+}
+function createSimple() {
+	add(text("id_n1"));
+	add(select("id_oper", new Array ("+", "-","min","max","остаток от деления")));
+	add(text("id_n2"));
+	add(button("=", calculateResult));
+	add(text("id_result"));
+}
+
+function calculateProcent() {
+	var s = document.getElementById("id_summa").value;
+	var t = document.getElementById("id_srok").value;
+	var p = document.getElementById("id_procent").value;
+	document.getElementById('id_dohod').value = 0.01*s*t*p;
+}
+
+function calculateResult() {
+	var n1 = parseFloat(document.getElementById("id_n1").value);
+	var n2 = parseFloat(document.getElementById("id_n2").value);
+	var oper = document.getElementById("id_oper").value;
+	
+		if (oper =="+") {
+		result = n1+n2;
+		} else if  (oper=="-") {
+		result = n1-n2;
+		} else if (oper=="min") {
+			if (n1>n2) {
+			result = n2;
+			}
+			else {result = n1;}
+		} else if (oper=="max"){
+			if (n1<n2){
+			result = n2;
+			}
+			else {result = n1;}
+		} else {
+			result = n1%n2;
+		}
+	
+		document.getElementById("id_result").value = result;
+}
+
+function clr() {
+	var del = document.getElementById("calculator");
+	while (del.firstChild!=null){
+	del.removeChild(del.firstChild);
+	}
+}
+function add(element){
+	document.getElementById('calculator').appendChild(element);
+}
+</script>
+<body onload = "createSimple()" >
+	<div id = "selector">
+	<input type = "radio" name="radio"  checked
+	onclick="clr();createSimple()"/>
+	Обычный калькулятор
+	<br>
+	<input type = "radio" name="radio"
+	onclick="clr();createProcent()"/>
+	Калькулятор процентов
+	</div>
+	
+	<br>
+	<div id = "calculator">
+	</div>
+</body>
+</html>
